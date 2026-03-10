@@ -1,0 +1,47 @@
+<?php
+
+namespace App\Policies;
+
+use App\Models\User;
+use App\Enums\UserRole;
+
+class UserPolicy
+{
+    /**
+     * README: ADMIN - faz tudo | MANAGER - pode gerenciar usuários
+     */
+    public function viewAny(User $user): bool
+    {
+        return in_array($user->role, [UserRole::ADMIN, UserRole::MANAGER]);
+    }
+
+    public function view(User $user, User $model): bool
+    {
+        return in_array($user->role, [UserRole::ADMIN, UserRole::MANAGER]) || $user->id === $model->id;
+    }
+
+    public function create(User $user): bool
+    {
+        return in_array($user->role, [UserRole::ADMIN, UserRole::MANAGER]);
+    }
+
+    public function update(User $user, User $model): bool
+    {
+        return in_array($user->role, [UserRole::ADMIN, UserRole::MANAGER]) || $user->id === $model->id;
+    }
+
+    public function delete(User $user, User $model): bool
+    {
+        return in_array($user->role, [UserRole::ADMIN, UserRole::MANAGER]);
+    }
+
+    public function restore(User $user, User $model): bool
+    {
+        return in_array($user->role, [UserRole::ADMIN, UserRole::MANAGER]);
+    }
+
+    public function forceDelete(User $user, User $model): bool
+    {
+        return $user->role === UserRole::ADMIN;
+    }
+}

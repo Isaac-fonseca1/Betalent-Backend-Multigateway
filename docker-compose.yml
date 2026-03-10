@@ -1,0 +1,55 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: betalent-app
+    ports:
+      - "8000:8000"
+    environment:
+      - WWWUSER=1000
+    volumes:
+      - .:/var/www/html
+    networks:
+      - betalent-network
+    depends_on:
+      mysql:
+        condition: service_healthy
+      gateways-mock:
+        condition: service_started
+
+  mysql:
+    image: 'mysql:8.0'
+    ports:
+      - '${FORWARD_DB_PORT:-3306}:3306'
+    environment:
+      MYSQL_ROOT_PASSWORD: '${DB_PASSWORD:-secret}'
+      MYSQL_ROOT_HOST: '%'
+      MYSQL_DATABASE: '${DB_DATABASE:-betalent}'
+      MYSQL_USER: '${DB_USERNAME:-betalent}'
+      MYSQL_PASSWORD: '${DB_PASSWORD:-secret}'
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+    volumes:
+      - 'betalent-mysql:/var/lib/mysql'
+    networks:
+      - betalent-network
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-p${DB_PASSWORD:-secret}" ]
+      retries: 3
+      timeout: 5s
+
+  gateways-mock:
+    image: matheusprotzen/gateways-mock
+    ports:
+      - "3001:3001"
+      - "3002:3002"
+    networks:
+      - betalent-network
+
+networks:
+  betalent-network:
+    driver: bridge
+
+volumes:
+  betalent-mysql:
+    driver: local
