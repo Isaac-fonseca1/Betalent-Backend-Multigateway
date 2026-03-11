@@ -19,8 +19,8 @@ interface PaymentGatewayContract
     /**
      * Process a refund.
      *
-     * @param string $transactionId The external reference ID
+     * @param string|null $transactionId The external reference ID
      * @return array ['status' => 'sucesso'|'falha']
      */
-    public function refund(string $transactionId): array;
+    public function refund(?string $transactionId): array;
 }

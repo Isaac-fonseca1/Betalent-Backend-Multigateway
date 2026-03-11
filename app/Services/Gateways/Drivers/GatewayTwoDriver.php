@@ -32,6 +32,14 @@ class GatewayTwoDriver implements PaymentGatewayContract
      */
     public function charge(float $amount, string $clientName, string $clientEmail, string $cardNumber, string $cvv): array
     {
+        \Illuminate\Support\Facades\Log::info('Gateway 2 payload: ' . json_encode([
+            'valor' => (int) round($amount * 100), // Value in centavos (same as Gateway 1)
+            'nome' => $clientName,
+            'email' => $clientEmail,
+            'numeroCartao' => $cardNumber,
+            'cvv' => $cvv,
+        ]));
+
         $response = $this->httpClient()->post("{$this->baseUrl}/transacoes", [
             'valor' => (int) round($amount * 100), // Value in centavos (same as Gateway 1)
             'nome' => $clientName,
@@ -39,6 +47,9 @@ class GatewayTwoDriver implements PaymentGatewayContract
             'numeroCartao' => $cardNumber,
             'cvv' => $cvv,
         ]);
+
+        \Illuminate\Support\Facades\Log::info('Gateway 2 response body: ' . $response->body());
+        \Illuminate\Support\Facades\Log::info('Gateway 2 extracted ID: ' . $response->json('id'));
 
         if ($response->successful()) {
             return [
@@ -56,7 +67,7 @@ class GatewayTwoDriver implements PaymentGatewayContract
     /**
      * README Gateway 2 refund: POST /transacoes/reembolso with {"id": "..."}
      */
-    public function refund(string $transactionId): array
+    public function refund(?string $transactionId): array
     {
         $response = $this->httpClient()->post("{$this->baseUrl}/transacoes/reembolso", [
             'id' => $transactionId,

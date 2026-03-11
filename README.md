@@ -17,7 +17,7 @@ Sistema gerenciador de pagamentos multi-gateway desenvolvido em **Laravel 11 + P
 
 ```bash
 # 1. Clone o repositório
-git clone <url-do-repositorio>
+git clone <(https://github.com/Isaac-fonseca1/Betalent-Backend-Multigateway.git)>
 cd Betalent-Backend-Teste
 
 # 2. Suba os containers

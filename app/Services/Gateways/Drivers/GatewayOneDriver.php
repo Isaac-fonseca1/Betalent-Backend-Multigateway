@@ -63,7 +63,7 @@ class GatewayOneDriver implements PaymentGatewayContract
     /**
      * README Gateway 1 refund: POST /transactions/:id/charge_back
      */
-    public function refund(string $transactionId): array
+    public function refund(?string $transactionId): array
     {
         $token = $this->getAuthToken();
 

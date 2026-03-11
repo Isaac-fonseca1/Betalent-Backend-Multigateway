@@ -54,6 +54,10 @@ class TransactionController extends Controller
             throw new RefundFailedException('Não há gateway associado a esta transação para processar o estorno.');
         }
 
+        if (empty($transaction->external_id)) {
+            throw new RefundFailedException('Esta transação não possui um ID externo no gateway para processar o estorno.');
+        }
+
         $driver = GatewayFactory::make($transaction->gateway->driver);
         $response = $driver->refund($transaction->external_id);
 
